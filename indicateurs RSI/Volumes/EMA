@@ -1,0 +1,32 @@
+//@version=5
+indicator("Nexus BTC Trend", overlay=true)
+
+// Paramètres
+fastEMA = input.int(20, title="EMA Rapide")
+slowEMA = input.int(50, title="EMA Lente")
+rsiLength = input.int(14, title="RSI Length")
+
+// Calculs
+emaFast = ta.ema(close, fastEMA)
+emaSlow = ta.ema(close, slowEMA)
+rsi = ta.rsi(close, rsiLength)
+
+// Conditions
+bullish = emaFast > emaSlow and rsi > 55
+bearish = emaFast < emaSlow and rsi < 45
+
+// Signaux
+buySignal = ta.crossover(emaFast, emaSlow) and rsi > 50
+sellSignal = ta.crossunder(emaFast, emaSlow) and rsi < 50
+
+// Affichage EMA
+plot(emaFast, color=color.green, title="EMA Rapide")
+plot(emaSlow, color=color.red, title="EMA Lente")
+
+// Signaux visuels
+plotshape(buySignal, title="BUY", location=location.belowbar, color=color.green, style=shape.labelup, text="BUY")
+
+plotshape(sellSignal, title="SELL", location=location.abovebar, color=color.red, style=shape.labeldown, text="SELL")
+
+// Fond tendance
+bgcolor(bullish ? color.new(color.green, 90) : bearish ? color.new(color.red, 90) : na)
